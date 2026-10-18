@@ -250,8 +250,9 @@ public static class Program
         var final = ResolveWith(engine, 900, 100);
         Check(final.Success, "third round win resolves");
         Check(engine.IsComplete, "match completes at 3 round wins");
-        Equal("Alpha", engine.Winner?.Name, "Alpha wins the gauntlet 3-0");
-        Equal(3, engine.SeriesWins["Alpha" == engine.Winner.Name ? engine.Winner.Id : engine.Fighters[0].Id], "3 series wins recorded");
+        var winner = engine.Winner!;
+        Equal("Alpha", winner.Name, "Alpha wins the gauntlet 3-0");
+        Equal(3, engine.SeriesWins[winner.Id], "3 series wins recorded");
     }
 
     private static void TestBattleRoyale()
