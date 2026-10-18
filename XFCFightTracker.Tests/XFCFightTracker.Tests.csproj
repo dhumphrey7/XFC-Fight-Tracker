@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>14.0</LangVersion>
+    <AssemblyName>XFCFightTracker.Tests</AssemblyName>
+    <RootNamespace>XFCFightTracker.Tests</RootNamespace>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS8618</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The engine and models are deliberately free of Dalamud dependencies, so they
+         can be compiled and exercised headlessly here. -->
+    <Compile Include="../XFC-Fight-Tracker/Core/FightCatalog.cs" />
+    <Compile Include="../XFC-Fight-Tracker/Core/MatchEngine.cs" />
+    <Compile Include="../XFC-Fight-Tracker/Core/RollParser.cs" />
+    <Compile Include="../XFC-Fight-Tracker/Models/FightType.cs" />
+    <Compile Include="../XFC-Fight-Tracker/Models/Fighter.cs" />
+    <Compile Include="../XFC-Fight-Tracker/Models/RoundResult.cs" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>
