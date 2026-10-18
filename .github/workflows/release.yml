@@ -1,0 +1,111 @@
+name: Release
+
+# Tagging a version publishes the plugin zip and refreshes pluginmaster.json,
+# which is the file Dalamud reads for this custom repository.
+#
+#   git tag v0.1.0.0 && git push origin v0.1.0.0
+#
+# Users subscribe to:
+#   https://raw.githubusercontent.com/dhumphrey7/XFC-Fight-Tracker/master/pluginmaster.json
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to publish (e.g. v0.1.0.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+      with:
+        ref: ${{ github.event.inputs.tag || github.ref }}
+        fetch-depth: 0
+
+    - name: Resolve version
+      id: ver
+      shell: pwsh
+      run: |
+        $tag = "${{ github.event.inputs.tag }}"
+        if (-not $tag) { $tag = "${{ github.ref_name }}" }
+        $ver = $tag -replace '^v', ''
+        # Dalamud compares AssemblyVersion, which must be 4 numeric parts.
+        if ($ver -notmatch '^\d+\.\d+\.\d+\.\d+$') {
+          Write-Error "Tag '$tag' must look like v1.2.3.4 so AssemblyVersion can be derived from it."
+          exit 1
+        }
+        "tag=$tag"      >> $env:GITHUB_OUTPUT
+        "version=$ver"  >> $env:GITHUB_OUTPUT
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Download Dalamud
+      shell: pwsh
+      run: |
+        Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/latest.zip -OutFile dalamud.zip
+        Expand-Archive -Force dalamud.zip "$env:APPDATA\XIVLauncher\addon\Hooks\dev"
+
+    - name: Build plugin
+      shell: pwsh
+      run: |
+        dotnet build XFC-Fight-Tracker.slnx --configuration Release `
+          -p:Version=${{ steps.ver.outputs.version }}
+
+    - name: Verify build output
+      shell: pwsh
+      run: |
+        $zip = "XFC-Fight-Tracker/bin/x64/Release/XFC-Fight-Tracker/latest.zip"
+        if (-not (Test-Path $zip)) { Write-Error "DalamudPackager did not produce $zip"; exit 1 }
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $names = [System.IO.Compression.ZipFile]::OpenRead((Resolve-Path $zip)).Entries.FullName
+        Write-Host "latest.zip contains: $($names -join ', ')"
+        if (-not ($names -match 'XFC-Fight-Tracker\.dll')) { Write-Error "zip is missing the plugin dll"; exit 1 }
+        if (-not ($names -match 'XFC-Fight-Tracker\.json')) { Write-Error "zip is missing the manifest"; exit 1 }
+
+    - name: Create release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: ${{ steps.ver.outputs.tag }}
+        name: XFC Fight Tracker ${{ steps.ver.outputs.tag }}
+        files: XFC-Fight-Tracker/bin/x64/Release/XFC-Fight-Tracker/latest.zip
+        generate_release_notes: true
+
+    # Regenerate the repository file from the manifest the build just produced,
+    # so pluginmaster.json can never drift from what was actually shipped.
+    - name: Regenerate pluginmaster.json
+      shell: pwsh
+      run: |
+        python scripts/build-repo.py `
+          --manifest XFC-Fight-Tracker/bin/x64/Release/XFC-Fight-Tracker/XFC-Fight-Tracker.json `
+          --out pluginmaster.json `
+          --tag ${{ steps.ver.outputs.tag }} `
+          --icon-url "https://raw.githubusercontent.com/${{ github.repository }}/master/images/icon.png"
+
+    - name: Validate pluginmaster.json
+      shell: pwsh
+      run: python scripts/build-repo.py --check-only --strict --out pluginmaster.json
+
+    - name: Commit pluginmaster.json
+      shell: pwsh
+      run: |
+        git config user.name  "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add pluginmaster.json
+        if (git diff --cached --quiet) {
+          Write-Host "pluginmaster.json already up to date"
+        } else {
+          git commit -m "Update pluginmaster.json for ${{ steps.ver.outputs.tag }}"
+          git push origin HEAD:${{ github.event.repository.default_branch }}
+        }

@@ -1,0 +1,39 @@
+[
+  {
+    "Author": "X-Fight Club",
+    "Name": "XFC Fight Tracker",
+    "InternalName": "XFC-Fight-Tracker",
+    "AssemblyVersion": "0.1.0.0",
+    "Description": "Runs X-Fight Club match types inside FFXIV: Basic Rules, Russian Roulette, Battle Royale, Gauntlet, Iron Crown, Tag Team, Power Bottom Extravaganza and more.\n\nTracks rolls read from chat, damage, eliminations, lives and brackets, and keeps a match history you can export.",
+    "ApplicableVersion": "any",
+    "RepoUrl": "https://github.com/dhumphrey7/XFC-Fight-Tracker",
+    "Tags": [
+      "xfc",
+      "fight club",
+      "rolls",
+      "pvp",
+      "tournament"
+    ],
+    "CategoryTags": [
+      "utility"
+    ],
+    "DalamudApiLevel": 15,
+    "LoadRequiredState": 0,
+    "LoadSync": false,
+    "CanUnloadAsync": false,
+    "LoadPriority": 0,
+    "Punchline": "Track X-Fight Club fights, rolls and brackets in-game.",
+    "Changelog": "Initial prototype.\n\n- All ten XFC match types with their real rules built in.\n- Rolls read from the FFXIV chat log automatically.\n- Damage, eliminations, lives and Iron Crown block scoring tracked.\n- Match history with clipboard and CSV export.",
+    "AcceptsFeedback": true,
+    "DownloadLinkInstall": "https://github.com/dhumphrey7/XFC-Fight-Tracker/releases/download/v0.1.0.0/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/dhumphrey7/XFC-Fight-Tracker/releases/download/v0.1.0.0/latest.zip",
+    "DownloadLinkTesting": "https://github.com/dhumphrey7/XFC-Fight-Tracker/releases/download/v0.1.0.0/latest.zip",
+    "LastUpdate": 1792312845,
+    "TestingAssemblyVersion": "0.1.0.0",
+    "TestingDalamudApiLevel": 15,
+    "IsTestingExclusive": false,
+    "IsHide": false,
+    "DownloadCount": 0,
+    "IconUrl": "https://raw.githubusercontent.com/dhumphrey7/XFC-Fight-Tracker/master/images/icon.png"
+  }
+]

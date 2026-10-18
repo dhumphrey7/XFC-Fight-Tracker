@@ -53,3 +53,28 @@ jobs:
 
     - name: Run rules tests
       run: dotnet run --project XFCFightTracker.Tests/XFCFightTracker.Tests.csproj
+
+  repo-file:
+    # The repository file is what Dalamud actually reads, so validate it on
+    # every push rather than discovering a problem at release time.
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Validate pluginmaster.json
+      run: python3 scripts/build-repo.py --check-only --strict --out pluginmaster.json
+
+    - name: Check icon is a real PNG
+      run: |
+        python3 - <<'EOF'
+        import struct, sys
+        d = open("images/icon.png", "rb").read()
+        if d[:8] != b"\x89PNG\r\n\x1a\n":
+            sys.exit("images/icon.png is not a PNG")
+        w, h = struct.unpack(">II", d[16:24])
+        print(f"icon is a valid {w}x{h} PNG ({len(d)} bytes)")
+        if w != h:
+            sys.exit("icon should be square")
+        EOF

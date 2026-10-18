@@ -10,6 +10,13 @@
 Tracks rolls read from chat, damage, eliminations, lives and brackets, and keeps a match history you can export.</Description>
     <RepoUrl>https://github.com/dhumphrey7/XFC-Fight-Tracker</RepoUrl>
     <Tags>xfc;fight club;rolls;pvp;tournament</Tags>
-    <CategoryTags>Utility</CategoryTags>
+    <CategoryTags>utility</CategoryTags>
+    <ApplicableVersion>any</ApplicableVersion>
+    <Changelog>Initial prototype.
+
+- All ten XFC match types with their real rules built in.
+- Rolls read from the FFXIV chat log automatically.
+- Damage, eliminations, lives and Iron Crown block scoring tracked.
+- Match history with clipboard and CSV export.</Changelog>
   </PropertyGroup>
 </Project>

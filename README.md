@@ -12,6 +12,24 @@ It knows the club's match types, reads `/random` results straight out of the cha
 - **Match history** with clipboard and CSV export, so results can be posted to Discord or kept for the record.
 - **Ties are never guessed.** A tie that the rules do not resolve asks for a re-roll instead of silently picking a winner.
 
+## Install
+
+This plugin is distributed from its own custom Dalamud repository.
+
+1. In game, open **ESC → Dalamud Settings → Experimental**.
+2. Under **Custom Plugin Repositories**, add:
+
+   ```
+   https://raw.githubusercontent.com/dhumphrey7/XFC-Fight-Tracker/master/pluginmaster.json
+   ```
+
+3. Tick the new entry as **Enabled** and save.
+4. Open `/xlplugins`, search for **XFC Fight Tracker**, and install.
+
+Updates arrive through the installer like any other plugin. The repository file
+is generated from the build manifest on every release, so it cannot drift from
+what actually shipped. See [docs/repository-compliance.md](docs/repository-compliance.md).
+
 ## Commands
 
 | Command | What it does |
